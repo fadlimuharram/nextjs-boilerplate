@@ -1,0 +1,140 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var cluster = require('cluster');
+
+var {
+  join
+} = require('path')
+var {
+  parse
+} = require('url')
+var next = require('next')
+
+var port = parseInt(process.env.PORT, 10) || 3000;
+var dev = process.env.NODE_ENV !== 'production';
+var app = next({
+  dev
+})
+var debug = require('debug')('boilerplate:server');
+var http = require('http');
+var numCPUs = require('os').cpus().length;
+var handle = app.getRequestHandler()
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3000');
+
+/**
+ * Create HTTP server.
+ */
+app.prepare().then(() => {
+  if (cluster.isMaster) {
+    for (var i = 0; i < numCPUs; i++) {
+      // Create a worker
+      cluster.fork();
+    }
+
+    cluster.on('message', function (worker) {
+      //console.log('Request : %d', worker.process.pid);
+    });
+
+    cluster.on('online', function (worker, code, signal) {
+      console.log('Worker Start with PID %d', worker.process.pid);
+    });
+
+    cluster.on('exit', function (worker, code, signal) {
+      console.log('Worker %d died with code/signal %s. Restarting worker...', worker.process.pid, signal || code);
+
+      cluster.fork();
+    });
+  } else {
+    var server = http.createServer((req, res) => {
+      const parsedUrl = parse(req.url, true)
+      const {
+        pathname
+      } = parsedUrl
+
+      if (pathname === '/service-worker.js') {
+        const filePath = join(__dirname, '../.next', pathname)
+        app.serveStatic(req, res, filePath)
+      } else {
+        handle(req, res, parsedUrl)
+      }
+    })
+
+
+
+    /**
+     * Listen on provided port, on all network interfaces.
+     */
+
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening);
+  }
+
+  /**
+   * Event listener for HTTP server "error" event.
+   */
+
+  function onError(error) {
+    if (error.syscall !== 'listen') {
+      throw error;
+    }
+
+    var bind = typeof port === 'string' ?
+      'Pipe ' + port :
+      'Port ' + port;
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+      case 'EACCES':
+        console.error(bind + ' requires elevated privileges');
+        process.exit(1);
+        break;
+      case 'EADDRINUSE':
+        console.error(bind + ' is already in use');
+        process.exit(1);
+        break;
+      default:
+        throw error;
+    }
+  }
+
+  /**
+   * Event listener for HTTP server "listening" event.
+   */
+
+  function onListening() {
+    var addr = server.address();
+    var bind = typeof addr === 'string' ?
+      'pipe ' + addr :
+      'port ' + addr.port;
+    debug('Listening on ' + bind);
+  }
+})
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
