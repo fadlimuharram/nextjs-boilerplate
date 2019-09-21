@@ -1,4 +1,5 @@
 import { clockConstants } from "../constants";
+import axios from "axios";
 
 export const serverRenderClock = () => {
   return { type: clockConstants.TICK, light: false, ts: Date.now() }
@@ -19,10 +20,9 @@ export const resetCount = () => {
   return { type: clockConstants.RESET }
 }
 
-export const loadExampleData = data => {
-  return { type: clockConstants.LOAD_EXAMPLE_DATA, data }
-}
-
-export const loadingExampleDataFailure = () => {
-  return { type: clockConstants.LOADING_DATA_FAILURE }
+export const loadExampleData = () => async dispatch => {
+  dispatch({
+    type: clockConstants.LOAD_EXAMPLE_DATA,
+    payload: axios.get('https://jsonplaceholder.typicode.com/users')
+  })
 }

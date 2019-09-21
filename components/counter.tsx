@@ -3,7 +3,14 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { incrementCount, decrementCount, resetCount } from '../redux/action'
 
-class Counter extends Component {
+interface Props {
+  incrementCount: () => {},
+  decrementCount: () => {},
+  resetCount: () => {},
+  count: number
+}
+
+class Counter extends Component<Props> {
   increment = () => {
     const { incrementCount } = this.props
     incrementCount()

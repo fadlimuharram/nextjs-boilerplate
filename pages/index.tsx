@@ -7,10 +7,9 @@ import Example from "../components/example";
 class Home extends React.Component {
 
   static getInitialProps({ reduxStore, req }) {
-    const isServer = !!req
-    // DISPATCH ACTIONS HERE ONLY WITH `reduxStore.dispatch`
 
-    reduxStore.dispatch(serverRenderClock(isServer))
+
+    reduxStore.dispatch(serverRenderClock())
 
     return {}
   }
@@ -27,7 +26,7 @@ class Home extends React.Component {
           <div className="dropdown">
             <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Dropdown button
-  </button>
+            </button>
             <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <a className="dropdown-item" href="#">Action</a>
               <a className="dropdown-item" href="#">Another action</a>

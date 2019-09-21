@@ -7,7 +7,13 @@ import "../assets/styles/index.scss";
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistStore } from 'redux-persist'
 
-class MyApp extends App {
+interface Props {
+  reduxStore: any
+}
+
+class MyApp extends App<Props> {
+
+  persistor: any;
 
   constructor(props) {
     super(props);
