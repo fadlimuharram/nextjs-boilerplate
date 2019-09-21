@@ -3,7 +3,7 @@ import React from 'react'
 import withReduxStore from '../lib/with-redux-store'
 import { Provider } from 'react-redux'
 import { register, unregister } from 'next-offline/runtime'
-import "../assets/bootstrap4/scss/bootstrap.scss";
+import "../assets/styles/index.scss";
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistStore } from 'redux-persist'
 
