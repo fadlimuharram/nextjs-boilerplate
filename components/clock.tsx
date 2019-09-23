@@ -1,4 +1,8 @@
-export default ({ lastUpdate, light }) => {
+type ClockProps = {
+  lastUpdate: string,
+  light: boolean
+}
+const Clock = ({ lastUpdate, light }: ClockProps) => {
   return (
     <div className={light ? 'light' : ''}>
       {format(new Date(lastUpdate))}
@@ -17,5 +21,8 @@ export default ({ lastUpdate, light }) => {
     </div>
   )
 }
+
+
+export default Clock;
 
 const format = t => t.toJSON().slice(11, 19) // cut off except hh:mm:ss

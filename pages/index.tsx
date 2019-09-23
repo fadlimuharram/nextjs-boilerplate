@@ -6,13 +6,7 @@ import Example from "../components/example";
 
 class Home extends React.Component {
 
-  static getInitialProps({ reduxStore, req }) {
 
-
-    reduxStore.dispatch(serverRenderClock())
-
-    return {}
-  }
 
 
   render() {
